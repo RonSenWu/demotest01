@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>登录</title>
+		<!-- Bootstrap core CSS -->
+		<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link href="asserts/css/signin.css" th:href="@{/asserts/css/signin.css}" rel="stylesheet">
+		<link href="asserts/css/login.css" th:href="@{/asserts/css/login.css}" rel="stylesheet">
+		<link th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+
+		<style>
+			span.iconfont{
+				font-size: 50px;
+			}
+		</style>
+	</head>
+	<body class="text-center login-bg">
+		<div class="login layui-anim layui-anim-up">
+		<!--<div class="message">企业员工管理系统</div>-->
+		<!--<div id="darkbannerwrap"></div>-->
+			<form class="form-signin" th:action="@{/user/login}" method="post">
+				<!--			<img class="mb-4" th:src="@{/asserts/img/bootstrap-solid.svg}" src="asserts/img/bootstrap-solid.svg" alt="" width="72" height="72">-->
+				<span class="iconfont icon-login_user"></span>
+				<h1 class="h3 mb-3 font-weight-normal">管理员登录</h1>
+				<!--判断-->
+				<p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+				<label class="sr-only" >用户名</label>
+				<input type="text"  name="account" class="form-control" placeholder="Account" th:placeholder="请输入用户名" required="" autofocus="" value="admin">
+				<label class="sr-only">密码</label>
+				<input type="password" name="password" class="form-control" placeholder="Password" th:placeholder="请输入密码" required="" value="admin123456">
+				<div>
+					<p>
+						<input type="radio"  name="role" value="v1" onclick="checkradio()" ><span class="vt1">超级管理员</span>
+						<input type="radio"  name="role" value="v2" onclick="checkradio()"><span class="vt2">普通管理员</span>
+					</p>
+				</div>
+				<!--			<div class="checkbox mb-3">-->
+				<!--				<label>-->
+				<!--          			<input type="checkbox" name="remember" value="remember-me"/> [[#{login.remember}]]-->
+				<!--        		</label>-->
+				<!--			</div>-->
+				<button class="btn btn-lg btn-primary btn-block" type="submit" >登录</button>
+				<!--<hr class="hr15">
+				<a class="btn btn-sm" th:href="@{/index.html(l='zh_CN')}">中文</a>
+				<a class="btn btn-sm" th:href="@{/index.html(l='en_US')}">English</a>-->
+			</form>
+		</div>
+	</body>
+	<script>
+		function checkradio() {
+			var radio = document.getElementsByName("role");
+			for (var i=0;i<radio.length;i++){
+				if (radio[i].checked){
+					document.cookie='radioindex='+i;
+				}
+			}
+		}
+		window.onload = function () {
+			var cookies = document.cookie;
+			if (cookies != "") {
+				cookies = "{\"" + cookies + "\"}";
+				cookies = cookies.replace(/\s*/g, "").replace(/=/g, '":"').replace(/;/g,'","');
+				var json = eval("(" + cookies + ")"); //将coolies转成json对象
+				document.getElementsByName("role")[json.radioindex].checked = true;
+			} else {
+				checkradio();
+			}
+
+		}
+	</script>
+</html>

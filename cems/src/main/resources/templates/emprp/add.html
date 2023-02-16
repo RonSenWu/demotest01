@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>后台管理</title>
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+
+		<link th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+		<link th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+
+		<link href="asserts/css/from-table.css" th:href="@{/asserts/css/from-table.css}" rel="stylesheet">
+		<style >
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<!--引入抽取的topbar-->
+		<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+		<div th:replace="commons/bar::topbar"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入侧边栏-->
+				<div th:replace="commons/bar::#sidebar(activeUri='emprps')"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<!--需要区分是修改还是添加；-->
+					<form th:action="@{/emprp}" method="post" class="user-range">
+						<!--发送put请求修改数据-->
+						<!--
+						1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
+						2、页面创建一个post表单
+						3、创建一个input项，name="_method";值就是我们指定的请求方式
+						-->
+						<input type="hidden" name="_method" value="put" th:if="${emprp!=null}"/>
+						<input type="hidden" name="id" th:if="${emprp!=null}" th:value="${emprp.id}">
+						<div class="title" th:text="${emprp!=null}?'修改奖惩信息':'添加奖惩信息'">添加奖惩信息</div>
+						<table class="table-css">
+							<tr>
+								<td><label>员工姓名：</label></td>
+								<td>
+									<!--提交的是员工id-->
+									<select class="form-control" name="rpWorkId" th:if="${emprp==null}">
+										<option th:selected="${emprp!=null}?${emp.workID == emprp.rpWorkId}" th:value="${emp.workID}" th:each="emp:${emps}" th:text="${emp.name}"></option>
+									</select>
+									<input name="rpWorkId" type="text" class="form-control" th:if="${emprp!=null}"  th:value="${emps.name}" readonly>
+								</td>
+
+							</tr>
+							<tr>
+								<td><label>奖罚日期：</label></td>
+								<td><input name="rpDate" type="text" class="form-control" placeholder="1999-02-15" th:value="${emprp!=null}?${#dates.format(emprp.rpDate, 'yyyy-MM-dd')}"></td>
+							</tr>
+							<tr>
+								<td><label>奖罚类型：</label></td>
+								<td>
+									<select class="form-control" name="rpType" th:if="${emprp==null}">
+										<option value="">--请选择--</option>
+										<option  th:text="奖"></option>
+										<option  th:text="罚"></option>
+									</select>
+									<select class="form-control" name="rpType" th:if="${emprp!=null}">
+										<option th:selected="${emprp.rpType eq '奖'}" th:text="奖"></option>
+										<option th:selected="${emprp.rpType eq '罚'}" th:text="罚"></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td><label>奖罚原因：</label></td>
+								<td><input name="rpReason" type="text" class="form-control" placeholder="" th:value="${emprp!=null}?${emprp.rpReason}">
+							</tr>
+						</table>
+						<div class="user-bottom">
+							<button type="submit" class="btn btn-primary" th:text="${emprp!=null}?'修改':'确认'"></button>
+							<a th:href="@{/emprps}" class="btn btn-info" role="button">返回</a>
+						</div>
+					</form>
+				</main>
+			</div>
+		</div>
+		<script type="text/javascript" th:src="@{/webjars/jquery/3.5.0/jquery.js}"></script>
+
+	</body>
+
+</html>

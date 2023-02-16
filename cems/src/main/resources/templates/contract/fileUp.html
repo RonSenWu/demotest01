@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--	<meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />-->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>后台管理</title>
+
+	<link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+	<link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+	<link href="iconfont/iconfont.css" th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+	<style type="text/css">
+		@-webkit-keyframes chartjs-render-animation {
+			from {
+				opacity: 0.99
+			}
+			to {
+				opacity: 1
+			}
+		}
+
+		@keyframes chartjs-render-animation {
+			from {
+				opacity: 0.99
+			}
+			to {
+				opacity: 1
+			}
+		}
+
+	</style>
+</head>
+
+<body>
+<!--引入topbar-->
+<div th:replace="commons/bar::topbar"></div>
+<div class="container-fluid">
+	<div class="row">
+		<!--引入sidebar-->
+		<div th:replace="commons/bar::#sidebar(activeUri='contracts')"></div>
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+			<div id="result"></div>
+
+			<!--<input type="hidden" name="CId" id="CId" th:value="${contract.CId}">
+			<p><input type="file" name="file" id="file"></p>
+			<p style="font-size: 10px;color: red"><span>注：上传文件不能大于35MB</span></p>
+&lt;!&ndash;			<p><span th:text="${msg}"></span></p>&ndash;&gt;
+			<input type="submit" value="提交" onclick="submitFile()" >-->
+			<form method="post" th:action="@{/fileUp}" enctype="multipart/form-data" >
+				<input type="hidden" name="CId" id="CId" th:value="${contract.CId}">
+				<p><input type="file" name="file" id="file"></p>
+				<p style="font-size: 10px;color: red"><span>注：上传文件不能大于35MB</span></p>
+				<input type="submit" value="提交" onclick="submitFile()" >
+			</form>
+		</main>
+	</div>
+</div>
+
+<!--<script type="text/javascript" th:src="@{/webjars/jquery/3.5.0/jquery.js}"></script>-->
+
+<script th:src="@{/asserts/js/jquery-1.9.1.min.js}"> </script>
+<script type="text/javascript" th:inline="javascript">
+	function submitFile() {
+		// var fileInput=$('#file').get(0).files[0];
+		/*var file=$('#file')[0].files[0];
+		let formDate = new FormData();
+		formDate.append("file",file);*/
+		var file=$('#file').get(0).files[0];
+		var fileSize =file.size;
+		var cid = $('#CId').val();
+		//文件大小(35MB)
+		var num =36700160;
+		console.info(file);
+		console.info(fileSize);
+		if (fileSize>0&&fileSize<num){
+			$("#file").submit();
+			alert("文件上传成功");
+			return true;
+		}else {
+			alert("上传失败，文件内容为空或文件大小超过35MB");
+			$("#file").val("");
+			//window.location.href="http://localhost:8080/cems/contract/fileUp/"+cid;
+		}
+		/*$.ajax({
+			url:"/cems/contract/fileUp/"+cid,
+			type:"POST",
+			data:file,
+			enctype:"multipart/form-data",
+			processData:false,
+			contentType:false,
+			traditional:true,
+			success:function (d){
+				if (fileSize>0&&fileSize<num){
+					$("#file").submit();
+					alert("文件上传成功");
+					window.location.href="http://localhost:8080/cems/contracts";
+				}else {
+					$("#file").val("");
+					alert("上传失败，文件内容为空或文件大小超过35MB");
+					window.location.href="http://localhost:8080/cems/contract/fileUp/"+cid;
+				}
+				/!*$("#file").submit();
+				alert("文件上传成功");
+				window.location.href="http://localhost:8080/cems/contracts";*!/
+			},
+		})*/
+	}
+</script>
+
+</body>
+
+</html>

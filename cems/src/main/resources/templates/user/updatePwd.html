@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>后台管理</title>
+    <!-- Bootstrap core CSS -->
+
+<!--    <script th:src="@{/asserts/js/jquery-1.9.1.min.js}"></script>-->
+    <script th:src="@{/asserts/js/bootstrap.js}"></script>
+    <script th:src="@{/asserts/js/holder.js}"></script>
+
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <link th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+    <link href="asserts/css/from-table.css" th:href="@{/asserts/css/from-table.css}" rel="stylesheet">
+    <style type="text/css">
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="commons/bar::#sidebar(activeUri='users')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <form th:action="@{/updatePwd}" method="post" id="form-change-password"  class="user-range" onsubmit="return ck()" >
+                <!--发送put请求修改数据-->
+                <!--
+                1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
+                2、页面创建一个post表单
+                3、创建一个input项，name="_method";值就是我们指定的请求方式
+                -->
+                <!--<input type="hidden" name="_method" value="put" th:if="${user!=null}"/>-->
+                <input type="hidden" name="id" th:if="${user!=null}" th:value="${user.id}">
+                <input type="hidden" id="password" name="password" th:if="${user!=null}" th:value="${user.getPassword()}">
+
+                <table class="table-css">
+                    <tr>
+                        <td> <label>原密码：</label></td>
+                        <td><input id="old_password" name="old_password" type="password" class="form-control"
+                                   placeholder="请输入原密码"></td>
+                    </tr>
+                    <tr>
+                        <td><label>新密码：</label></td>
+                        <td> <input id="new_password" name="new_password" type="password" class="form-control"
+                                    placeholder="请输入新密码"></td>
+                    </tr>
+                    <tr>
+                        <td><label>确认密码：</label></td>
+                        <td><input id="ack_password" name="ack_password" type="password" class="form-control"
+                                   placeholder="请确认密码"></td>
+                    </tr>
+                </table>
+                <div class="user-bottom">
+                    <button type="submit" class="btn btn-primary" id="btn-change-password"  >修改</button>
+                    <a th:href="@{/emps}" class="btn btn-info" role="button">返回</a>
+                </div>
+
+            </form>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/webjars/jquery/3.5.0/jquery.js}"></script>
+<script th:src="@{/asserts/js/md5.js}"> </script>
+
+
+
+
+<script type="text/javascript">
+     function ck() {
+         var  pwd = $("#password").val();
+         var oldPwd = $("#old_password").val();
+         let oldPwd_md5 = hex_md5(oldPwd);
+         //console.log(oldPwd_md5);
+         var newPwd = $("#new_password").val();
+         var actPwd = $("#ack_password").val();
+         if (oldPwd===""||newPwd===""||oldPwd==="") {
+             alert("输入密码不能为空，请输入密码！");
+             return false;
+         } else {
+             if (newPwd !==actPwd) {
+                 alert("修改失败，确认密码不一致！");
+                 return false;
+             }else if (oldPwd_md5 !== pwd){
+                 alert("修改失败，原密码输入有误");
+                 return false;
+             }else {
+                 alert("修改成功,请重新登录！");
+                 return true;
+             }
+         }
+     }
+</script>
+</body>
+
+</html>

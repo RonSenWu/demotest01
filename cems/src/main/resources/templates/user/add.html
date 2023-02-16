@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>后台管理</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <link th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+    <link href="asserts/css/from-table.css" th:href="@{/asserts/css/from-table.css}" rel="stylesheet">
+    <style type="text/css">
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="commons/bar::#sidebar(activeUri='users')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <!--需要区分是修改还是添加；-->
+            <form th:action="@{/user}" method="post" class="user-range">
+                <!--发送put请求修改数据-->
+                <!--
+                1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
+                2、页面创建一个post表单
+                3、创建一个input项，name="_method";值就是我们指定的请求方式
+                -->
+                <input type="hidden" name="_method" value="put" th:if="${user!=null}"/>
+                <input type="hidden" name="id" th:if="${user!=null}" th:value="${user.id}">
+                <div class="title" th:text="${user!=null}?'修改账号信息':'添加账号信息'">添加账号信息</div>
+                <table class="table-css">
+                    <tr>
+                        <td><label>用户名：</label></td>
+                        <td><input name="username" type="text" class="form-control" placeholder=""
+                                   th:value="${user!=null}?${user.username}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>账号：</label></td>
+                        <td><input name="account" type="text" class="form-control" placeholder=""
+                                   th:value="${user!=null}?${user.account}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>密码：</label></td>
+                        <td><input name="password" type="text" class="form-control" placeholder=""
+                                   th:value="${user!=null}?${user.password}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>是否激活：</label></td>
+                        <td><label>
+                            <input  type="radio" name="enabled" value="1"
+                                   th:checked="${user!=null}?${user.enabled==1}">
+                        </label>是
+                            <label>
+                                <input type="radio" name="enabled" value="0"
+                                       th:checked="${user!=null}?${user.enabled==0}">
+                            </label>否
+						</td>
+                    </tr>
+                    <tr>
+                        <td><label>账户类型：</label></td>
+                        <td><select class="form-control" name="role" required>
+                            <option value="">--请选择--</option>
+                            <option th:selected="${user!=null}?${user.role} eq 'v1'" value="v1">超级管理员</option>
+                            <option th:selected="${user!=null}?${user.role} eq 'v2'" value="v2">普通管理员</option>
+                        </select></td>
+                    </tr>
+                </table>
+                <div class="user-bottom">
+                    <button type="submit" class="btn btn-primary" th:text="${user!=null}?'修改':'确认'"></button>
+                    <a th:href="@{/users}" class="btn btn-info" role="button">返回</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" th:src="@{/webjars/jquery/3.5.0/jquery.js}"></script>
+
+</body>
+
+</html>

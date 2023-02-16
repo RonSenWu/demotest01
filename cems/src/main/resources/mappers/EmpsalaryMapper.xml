@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wrs.cems.mapper.EmpsalaryMapper">
+    <resultMap id="MyEmpsalary" type="com.wrs.cems.bean.Empsalary">
+        <id column="id" property="SId"/>
+        <result column="eid" property="SWorkId"/>
+        <result column="basicSal" property="basicSal"/>
+        <result column="perk" property="perk"/>
+        <result column="bonus" property="bonus"/>
+        <result column="forfeit" property="forfeit"/>
+        <result column="accountSal" property="accountSal"/>
+        <result column="salDate" property="salDate"/>
+
+        <association property="emp" javaType="com.wrs.cems.bean.Employee">
+            <id column="e_id" property="EId"/>
+            <result column="ename" property="name"/>
+            <result column="workID" property="workID"/>
+        </association>
+
+    </resultMap>
+
+    <select id="getEmpsalaryById" resultType="com.wrs.cems.bean.Empsalary">
+        select SId, SWorkId, basic_sal as basicSal, perk, bonus, forfeit, account_sal as accountSal, sal_date as salDate
+        from emp_salary
+        where SId = #{SId}
+    </select>
+
+    <select id="getAll" resultMap="MyEmpsalary">
+        select es.SId             id,
+               es.SWorkId         eid,
+               es.basic_sal   as basicSal,
+               es.perk           perk,
+               es.bonus          bonus,
+               es.forfeit        forfeit,
+               es.account_sal as accountSal,
+               es.sal_date    as salDate,
+               e.EId              e_id,
+               e.name            ename,
+               e.gender          gender,
+               e.birthday        birthday,
+               e.IDCard          IDCard,
+               e.wedlock         wedlock,
+               e.nationId        nationId,
+               e.nativePlace     nativePlace,
+               e.email           email,
+               e.phone           phone,
+               e.address         address,
+               e.deptId          deptId,
+               e.posId           posId,
+               e.degree          degree,
+               e.school          school,
+               e.workDate        workDate,
+               e.workState       workState,
+               e.workID          workID,
+               e.notWorkDate     notWorkDate
+        from emp_salary es,
+             employee e
+        where es.SWorkId = e.workID
+    </select>
+
+    <select id="getAllEmpsalarys" resultType="com.wrs.cems.bean.Empsalary">
+        select *
+        from emp_salary
+    </select>
+
+    <delete id="deleteEmpsalaryById">
+        delete
+        from emp_salary
+        where SId = #{SId}
+    </delete>
+
+    <insert id="addEmpsalary" parameterType="com.wrs.cems.bean.Empsalary">
+        insert into emp_salary (SWorkId, basic_sal, perk, bonus, forfeit, account_sal, sal_date)
+        values ( #{SWorkId}, #{basicSal}, #{perk}, #{bonus}, #{forfeit}, #{accountSal}, #{salDate})
+    </insert>
+
+    <update id="updateEmpsalary" parameterType="com.wrs.cems.bean.Empsalary">
+        update emp_salary
+        set basic_sal   = #{basicSal},
+            perk        = #{perk},
+            bonus       = #{bonus},
+            forfeit     = #{forfeit},
+            account_sal = #{accountSal},
+            sal_date    = #{salDate}
+        where SId = #{SId}
+    </update>
+
+    <select id="query" resultMap="MyEmpsalary">
+        select es.SId id,
+        es.SWorkId eid,
+        es.basic_sal as basicSal,
+        es.perk perk,
+        es.bonus bonus,
+        es.forfeit forfeit,
+        es.account_sal  as accountSal,
+        es.sal_date  as salDate,
+        e.EId e_id,
+        e.name ename,
+        e.gender gender,
+        e.birthday birthday,
+        e.IDCard IDCard,
+        e.wedlock wedlock,
+        e.nationId nationId,
+        e.nativePlace nativePlace,
+        e.email email,
+        e.phone phone,
+        e.address address,
+        e.deptId deptId,
+        e.posId posId,
+        e.degree degree,
+        e.school school,
+        e.workDate workDate,
+        e.workState workState,
+        e.workID workID,
+        e.notWorkDate notWorkDate
+        FROM emp_salary AS es JOIN employee e ON e.workID = es.SWorkId
+        <where>
+            <if test="name!=''">
+                AND e.name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="SWorkId!=''">
+                AND es.SWorkId LIKE #{SWorkId}
+            </if>
+            <if test="salDate!=''">
+                AND es.sal_date LIKE #{salDate}
+            </if>
+        </where>
+    </select>
+</mapper>

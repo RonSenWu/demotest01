@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>后台管理</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+
+    <link th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <link th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+    <link href="asserts/css/from-table.css" th:href="@{/asserts/css/from-table.css}" rel="stylesheet">
+    <style type="text/css">
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+<!--引入抽取的topbar-->
+<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+<div th:replace="commons/bar::topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入侧边栏-->
+        <div th:replace="commons/bar::#sidebar(activeUri='trains')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <!--需要区分是修改还是添加；-->
+            <form th:action="@{/train}" method="post" class="user-range">
+                <!--发送put请求修改数据-->
+                <!--
+                1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
+                2、页面创建一个post表单
+                3、创建一个input项，name="_method";值就是我们指定的请求方式
+                -->
+                <input type="hidden" name="_method" value="put" th:if="${train!=null}"/>
+                <input type="hidden" name="TId" th:if="${train!=null}" th:value="${train.TId}">
+                <div class="title" th:text="${train!=null}?'修改员工培训信息':'添加员工培训信息'">添加员工培训信息</div>
+                <table class="table-css">
+                    <tr>
+                        <td><label>员工姓名：</label></td>
+                        <td><select class="form-control" name="TWorkId" th:if="${train == null}">
+                            <option th:selected="${train!=null}?${emp.workID == train.TWorkId}" th:value="${emp.workID}"
+                                    th:each="emp:${emps}" th:text="${emp.name}"></option>
+                        </select>
+                            <input name="TWorkId" type="text" class="form-control" th:if="${train!=null}"
+                                   th:value="${emps.name}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><label>培训部门</label></td>
+                        <td>
+                            <select class="form-control" name="TDeptId" required>
+                                <option th:value="${dept.id}" th:each="dept:${depts}" th:text="${dept.name}"
+                                        th:selected="${train!=null}?${dept.id == train.TDeptId }"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>培训开始日期：</label></td>
+                        <td><input name="trainDate" type="text" class="form-control" placeholder="1999-02-15"
+                                   th:value="${train!=null}?${#dates.format(train.trainDate, 'yyyy-MM-dd')}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>培训结束日期：</label></td>
+                        <td><input name="trainEnd" type="text" class="form-control" placeholder="1999-03-15"
+                                   th:value="${train!=null}?${#dates.format(train.trainEnd, 'yyyy-MM-dd')}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>培训内容：</label></td>
+                        <td><input name="trainContent" type="text" class="form-control" placeholder=""
+                                   th:value="${train!=null}?${train.trainContent}"></td>
+                    </tr>
+                    <tr>
+                        <td><label>备注：</label></td>
+                        <td><input name="remark" type="text" class="form-control" placeholder=""
+                                   th:value="${train!=null}?${train.remark}"></td>
+                    </tr>
+                </table>
+                <div class="user-bottom">
+                    <button type="submit" class="btn btn-primary" th:text="${train!=null}?'修改':'确认'"></button>
+                    <a th:href="@{/trains}" class="btn btn-info" role="button">返回</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/webjars/jquery/3.5.0/jquery.js}"></script>
+
+</body>
+
+</html>

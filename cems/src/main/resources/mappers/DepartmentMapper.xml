@@ -1,0 +1,25 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wrs.cems.mapper.DepartmentMapper">
+
+    <select id="getDeptById" resultType="com.wrs.cems.bean.Department">
+        select id, name
+        from department
+        where id = #{id}
+    </select>
+
+    <select id="getAllDepts" resultType="com.wrs.cems.bean.Department">
+        select *
+        from department
+    </select>
+    <select id="findDeptByName" resultType="com.wrs.cems.bean.Department">
+        select id
+        from department
+        where name = #{name}
+    </select>
+    <select id="getAllName" resultType="com.wrs.cems.bean.Department">
+        select id,name
+        from department
+    </select>
+</mapper>

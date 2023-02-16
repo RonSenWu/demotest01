@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wrs.cems.mapper.EmployeeMapper">
+    <!--    resultMap:自定义结果集映射规则-->
+    <!--    自定义某个javaBean的封装规则
+            type 自定义规则的Java类型  id 唯一id方便使用
+    -->
+    <resultMap id="MyEmp" type="com.wrs.cems.bean.Employee">
+        <!--         指定主键列的封装规则  column：指定哪一列 property：指定对于的javaBean属性-->
+        <!--        id 定义主键-->
+        <id column="EId" property="EId"/>
+        <!--        result 定义普通列封装规则-->
+        <result column="name" property="name"/>
+        <!--        其他不指定的列会自动封装，推荐全写-->
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+        <result column="birthday" property="birthday"/>
+        <result column="IDCard" property="IDCard"/>
+        <result column="wedlock" property="wedlock"/>
+        <result column="nationId" property="nationId"/>
+        <result column="nativePlace" property="nativePlace"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="deptId" property="deptId"/>
+        <result column="posId" property="posId"/>
+        <result column="degree" property="degree"/>
+        <result column="school" property="school"/>
+        <result column="workDate" property="workDate"/>
+        <result column="workState" property="workState"/>
+        <result column="workID" property="workID"/>
+        <result column="notWorkDate" property="notWorkDate"/>
+        <!--        联合查询，级联属性封装结果集-->
+        <!--        <result column="did" property="dept.id"/>-->
+        <!--        <result column="deptname" property="dept.name"/>-->
+        <!--        association可以指定联合的javaBean对象
+                    property="dept"指定哪个属性是联合的对象
+                    javaType指定这个属性对象的类型
+        -->
+        <!--        使用association定义关联的单个对象封装规则-->
+        <association property="dept" javaType="com.wrs.cems.bean.Department">
+            <id column="did" property="id"/>
+            <result column="deptname" property="name"/>
+        </association>
+        <association property="position" javaType="com.wrs.cems.bean.Position">
+            <id column="pid" property="id"/>
+            <result column="posname" property="name"/>
+            <result column="posdid" property="did"/>
+        </association>
+    </resultMap>
+
+    <select id="getEmpById" resultType="com.wrs.cems.bean.Employee">
+        select *
+        from employee
+        where EId = #{EId}
+    </select>
+
+    <select id="getEmpAndDeptById" resultMap="MyEmp">
+        select e.EId             EId,
+               e.name           name,
+               e.age            age,
+               e.gender         gender,
+               e.birthday       birthday,
+               e.IDCard         IDCard,
+               e.wedlock        wedlock,
+               e.nationId       nationId,
+               e.nativePlace    nativePlace,
+               e.email          email,
+               e.phone          phone,
+               e.address        address,
+               e.deptId         deptId,
+               e.posId          posId,
+               e.degree         degree,
+               e.school         school,
+               e.workDate       workDate,
+               e.workState      workState,
+               e.workID         workID,
+               e.notWorkDate    notWorkDate,
+               d.id             did,
+               d.name           deptname,
+               p.id             pid,
+               p.name           posname,
+               p.did            posdid
+        from employee e,
+             department d,
+             position p
+        where e.deptId = d.id
+          and e.posId = p.id
+          and e.EId = #{EId}
+    </select>
+
+    <select id="getEmpAndDept" resultMap="MyEmp">
+        select e.EId            EId,
+               e.name           name,
+               e.age            age,
+               e.gender         gender,
+               e.birthday       birthday,
+               e.IDCard         IDCard,
+               e.wedlock        wedlock,
+               e.nationId       nationId,
+               e.nativePlace    nativePlace,
+               e.email          email,
+               e.phone          phone,
+               e.address        address,
+               e.deptId         deptId,
+               e.posId          posId,
+               e.degree         degree,
+               e.school         school,
+               e.workDate       workDate,
+               e.workState      workState,
+               e.workID         workID,
+               e.notWorkDate    notWorkDate,
+               d.id             did,
+               d.name           deptname,
+               p.id             pid,
+               p.name           posname,
+               p.did            posdid
+        from employee e,
+             department d,
+             position p
+        where e.deptId = d.id
+          and e.posId = p.id
+        order by e.EId asc
+    </select>
+
+    <select id="getEmpByWorkID" resultType="com.wrs.cems.bean.Employee">
+        select *
+        from employee
+        where workID = #{workID}
+    </select>
+
+    <select id="getAllEmps" resultType="com.wrs.cems.bean.Employee">
+        select *
+        from employee
+        order by EId desc
+    </select>
+
+    <delete id="deleteEmpById">
+        DELETE
+        FROM employee
+        WHERE EId = #{EId}
+    </delete>
+    <delete id="deleteEmpByWorkID">
+        DELETE
+        FROM employee
+        WHERE workID = #{workID}
+    </delete>
+
+    <insert id="addEmp" parameterType="com.wrs.cems.bean.Employee">
+        insert into employee (name, age, gender, birthday, IDCard, wedlock, nationId,
+                              nativePlace, email, phone, address, deptId, posId,
+                              degree, school, workDate, workState, workID, notWorkDate)
+        values (#{name}, #{age}, #{gender},
+                #{birthday}, #{IDCard}, #{wedlock},
+                #{nationId}, #{nativePlace}, #{email},
+                #{phone}, #{address}, #{deptId},
+                #{posId}, #{degree}, #{school},
+                #{workDate}, #{workState}, #{workID},
+                #{notWorkDate})
+    </insert>
+
+    <update id="updateEmp" parameterType="com.wrs.cems.bean.Employee">
+        update employee
+        set name           = #{name},
+            gender         = #{gender},
+            age            = #{age},
+            birthday       = #{birthday},
+            IDCard         = #{IDCard},
+            wedlock        = #{wedlock},
+            nationId       = #{nationId},
+            nativePlace    = #{nativePlace},
+            email          = #{email},
+            phone          = #{phone},
+            address        = #{address},
+            deptId         = #{deptId},
+            posId          = #{posId},
+            degree         = #{degree},
+            school         = #{school},
+            workDate       = #{workDate},
+            workState      = #{workState},
+            workID         = #{workID},
+            notWorkDate    = #{notWorkDate}
+        where EId = #{EId}
+    </update>
+
+    <select id="query" resultMap="MyEmp">
+        SELECT e.EId             EId,
+               e.name           name,
+               e.age            age,
+               e.gender         gender,
+               e.birthday       birthday,
+               e.IDCard         IDCard,
+               e.wedlock        wedlock,
+               e.nationId       nationId,
+               e.nativePlace    nativePlace,
+               e.email          email,
+               e.phone          phone,
+               e.address        address,
+               e.deptId         deptId,
+               e.posId          posId,
+               e.degree         degree,
+               e.school         school,
+               e.workDate       workDate,
+               e.workState      workState,
+               e.workID         workID,
+               e.notWorkDate    notWorkDate,
+               d.id             did,
+               d.name           deptname,
+               p.id             pid,
+               p.name           posname,
+               p.did            posdid
+       /* from employee e,
+             department d,
+             position p
+        where e.deptId = d.id
+          and e.posId = p.id*/
+        FROM employee AS e join department AS d on d.id=e.deptId join position p on p.id = e.posId
+        <where>
+            1=1
+            <if test=" name != ''">
+                AND e.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="workID != ''">
+                AND e.workID LIKE #{workID}
+            </if>
+            <if test="deptname !=''">
+                AND d.name = #{deptname}
+            </if>
+            <if test="workDate != ''">
+                AND e.workDate LIKE #{workDate}
+            </if>
+        </where>
+    </select>
+</mapper>

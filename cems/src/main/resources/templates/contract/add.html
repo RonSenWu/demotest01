@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>后台管理</title>
+		<!-- Bootstrap core CSS -->
+		<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+		<link th:href="@{/iconfont/iconfont.css}" rel="stylesheet">
+		<link href="asserts/css/from-table.css" th:href="@{/asserts/css/from-table.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<!--引入抽取的topbar-->
+		<!--模板名：会使用thymeleaf的前后缀配置规则进行解析-->
+		<div th:replace="commons/bar::topbar"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--引入侧边栏-->
+				<div th:replace="commons/bar::#sidebar(activeUri='contracts')"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<!--需要区分是修改还是添加；-->
+					<form th:action="@{/contract}" method="post" class="user-range">
+						<!--发送put请求修改数据-->
+						<!--
+						1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
+						2、页面创建一个post表单
+						3、创建一个input项，name="_method";值就是我们指定的请求方式
+						-->
+						<input type="hidden" name="_method" value="put" th:if="${contract!=null}"/>
+						<input type="hidden" name="CId" th:if="${contract!=null}" th:value="${contract.CId}">
+						<div class="title" th:text="${contract!=null}?'修改合同信息':'添加合同信息'">添加合同信息</div>
+						<table class="table-css">
+							<tr>
+								<td><label>员工姓名：</label></td>
+								<!--提交的是员工的工号workID-->
+								<td><select class="form-control" name="CWorkId" th:if="${contract==null}">
+									<option th:selected="${contract!=null}?${emp.workID == contract.CWorkId}" th:value="${emp.workID}" th:each="emp:${emps}" th:text="${emp.name}"></option>
+								</select>
+									<input name="workID" type="text" class="form-control" th:if="${contract!=null}"  th:value="${emps.name}" readonly></td>
+							</tr>
+							<tr>
+								<td><label>合同期限：</label></td>
+								<td><input name="contractTerm" type="text" class="form-control" placeholder="1" th:value="${contract!=null}?${contract.contractTerm}"></td>
+							</tr>
+							<tr>
+								<td><label>合同起始日期：</label></td>
+								<td><input name="beginContract" type="text" class="form-control" placeholder="1999-02-15" th:value="${contract!=null}?${#dates.format(contract.beginContract, 'yyyy-MM-dd')}"></td>
+							</tr>
+							<tr>
+								<td><label>合同终止日期：</label></td>
+								<td><input name="endContract" type="text" class="form-control" placeholder="1999-02-15" th:value="${contract!=null}?${#dates.format(contract.endContract, 'yyyy-MM-dd')}"></td>
+							</tr>
+							<tr th:if="${contract!=null}" type="hidden">
+								<td><label>合同内容：</label></td>
+								<td><input name="contractContent" type="text" class="form-control" placeholder="" readonly="readonly" th:value="${contract!=null}?${contract.contractContent}"></td>
+							</tr>
+						</table>
+						<div class="user-bottom">
+							<button type="submit" class="btn btn-primary" th:text="${contract!=null}?'修改':'确认'"></button>
+							<a th:href="@{/contracts}" class="btn btn-info" role="button">返回</a>
+						</div>
+					</form>
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" th:src="@{/webjars/jquery/3.5.0/jquery.js}"></script>
+	</body>
+
+</html>

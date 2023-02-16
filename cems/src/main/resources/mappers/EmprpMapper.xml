@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wrs.cems.mapper.EmprpMapper">
+    <resultMap id="MyEmprp" type="com.wrs.cems.bean.Emprp">
+        <id column="id" property="id"/>
+        <result column="rpWorkId" property="rpWorkId"/>
+        <result column="rpDate" property="rpDate"/>
+        <result column="rpType" property="rpType"/>
+        <result column="rpReason" property="rpReason"/>
+
+        <association property="emp" javaType="com.wrs.cems.bean.Employee">
+            <id column="e_id" property="EId"/>
+            <result column="name" property="name"/>
+            <result column="age" property="age"/>
+            <result column="gender" property="gender"/>
+            <result column="birthday" property="birthday"/>
+            <result column="IDCard" property="IDCard"/>
+            <result column="wedlock" property="wedlock"/>
+            <result column="nationId" property="nationId"/>
+            <result column="nativePlace" property="nativePlace"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="address" property="address"/>
+            <result column="deptId" property="deptId"/>
+            <result column="posId" property="posId"/>
+            <result column="degree" property="degree"/>
+            <result column="school" property="school"/>
+            <result column="workDate" property="workDate"/>
+            <result column="workState" property="workState"/>
+            <result column="eworkID" property="workID"/>
+            <result column="notWorkDate" property="notWorkDate"/>
+        </association>
+    </resultMap>
+
+    <select id="getEmprpById" resultType="com.wrs.cems.bean.Emprp">
+        select *
+        from emp_rp
+        where id = #{id}
+    </select>
+
+    <select id="getEmprpAndEmp" resultMap="MyEmprp">
+        select rp.id            id,
+               rp.rpWorkId      rpWorkId,
+               rp.rpDate        rpDate,
+               rp.rpType        rpType,
+               rp.rpReason      rpReason,
+               e.EId             e_id,
+               e.name           name,
+               e.gender         gender,
+               e.birthday       birthday,
+               e.IDCard         IDCard,
+               e.wedlock        wedlock,
+               e.nationId       nationId,
+               e.nativePlace    nativePlace,
+               e.email          email,
+               e.phone          phone,
+               e.address        address,
+               e.deptId         deptId,
+               e.posId          posId,
+               e.degree         degree,
+               e.school         school,
+               e.workDate       workDate,
+               e.workState      workState,
+               e.workID         eworkID,
+               e.notWorkDate    notWorkDate
+        from emp_rp rp,
+             employee e
+        where rp.rpWorkId = e.workID
+        order by id
+    </select>
+
+    <select id="getAllEmprps" resultType="com.wrs.cems.bean.Emprp">
+        select *
+        from emp_rp
+    </select>
+
+    <delete id="deleteEmprpById">
+        delete
+        from emp_rp
+        where id = #{id}
+    </delete>
+
+    <insert id="addEmprp" parameterType="com.wrs.cems.bean.Emprp">
+        insert into emp_rp (rpWorkId, rpDate, rpType, rpReason)
+        values (#{rpWorkId}, #{rpDate}, #{rpType}, #{rpReason})
+    </insert>
+
+    <update id="updateEmprp" parameterType="com.wrs.cems.bean.Emprp">
+        update emp_rp
+        set rpDate   = #{rpDate},
+            rpType   = #{rpType},
+            rpReason = #{rpReason}
+        where id = #{id}
+    </update>
+
+    <select id="query" resultMap="MyEmprp">
+        SELECT rp.id id, rp.rpWorkId rpWorkId,rp.rpDate rpDate,rp.rpType rpType,rp.rpReason rpReason,
+        e.EId e_id, e.name name, e.gender gender,e.birthday birthday, e.IDCard IDCard, e.wedlock wedlock,
+        e.nationId nationId, e.nativePlace nativePlace, e.email email,e.phone phone, e.address address,
+        e.deptId deptId, e.posId posId, e.degree degree,e.school school, e.workDate workDate,e.workState workState,
+        e.workID eworkID,e.notWorkDate notWorkDate
+        FROM emp_rp AS rp JOIN employee e ON e.workID = rp.rpWorkId
+        <where>
+            <if test="name!=''">
+                AND e.name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="rpWorkId!=''">
+                AND rp.rpWorkId =#{rpWorkId}
+            </if>
+            <if test="rpType">
+                AND rp.rpType =#{rpType}
+            </if>
+        </where>
+    </select>
+</mapper>

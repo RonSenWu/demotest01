@@ -1,0 +1,64 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wrs.cems.mapper.UserMapper">
+    <insert id="addUser">
+        INSERT INTO sys_user(id, username,account,password, enabled,role)
+        VALUES (#{id},#{username},#{account},#{password},#{enabled},#{role})
+    </insert>
+    <update id="updateUser">
+        update sys_user
+        set username =#{username},
+            account = #{account},
+            password = #{password},
+            enabled =#{enabled},
+            role =#{role}
+        where id = #{id}
+    </update>
+    <update id="updatePassword">
+        UPDATE sys_user
+        SET
+            password=#{password}
+        WHERE id = #{id}
+    </update>
+    <update id="updateUsername">
+        UPDATE sys_user
+        SET username=#{username}
+        WHERE id =#{id}
+    </update>
+    <delete id="deleteUserById">
+        delete
+        from sys_user
+        where id = #{id}
+    </delete>
+
+    <select id="login" resultType="com.wrs.cems.bean.User">
+        SELECT id, username, account, password, enabled, role
+        FROM sys_user
+        WHERE account = #{account}
+          and password = #{password}
+          and enabled = 1
+          and role=#{role}
+    </select>
+    <select id="findById" resultType="com.wrs.cems.bean.User">
+        SELECT id, username,account, password, enabled,role
+        FROM sys_user
+        WHERE id = #{id}
+    </select>
+    <select id="getAllUsers" resultType="com.wrs.cems.bean.User">
+        select id, username, account, password, enabled, role
+        from sys_user
+    </select>
+    <select id="query" resultType="com.wrs.cems.bean.User">
+        SELECT id, username, account,password, enabled, role
+        FROM sys_user
+        <where>
+            <if test="username!=''">
+                AND username LIKE CONCAT('%',#{username},'%')
+            </if>
+            <if test="role!=''">
+                AND role =#{role}
+            </if>
+        </where>
+    </select>
+</mapper>

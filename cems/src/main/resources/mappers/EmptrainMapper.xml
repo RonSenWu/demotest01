@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wrs.cems.mapper.EmptrainMapper">
+    <resultMap id="MyEmptrain" type="com.wrs.cems.bean.Emptrain">
+        <id column="id" property="TId"/>
+        <result column="eid" property="TWorkId"/>
+        <result column="TDeptId" property="TDeptId"/>
+        <result column="trainDate" property="trainDate"/>
+        <result column="trainEnd" property="trainEnd"/>
+        <result column="trainContent" property="trainContent"/>
+        <result column="remark" property="remark"/>
+
+        <association property="emp" javaType="com.wrs.cems.bean.Employee">
+            <id column="e_id" property="EId"/>
+            <result column="name" property="name"/>
+            <result column="age" property="age"/>
+            <result column="gender" property="gender"/>
+            <result column="birthday" property="birthday"/>
+            <result column="IDCard" property="IDCard"/>
+            <result column="wedlock" property="wedlock"/>
+            <result column="nationId" property="nationId"/>
+            <result column="nativePlace" property="nativePlace"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="address" property="address"/>
+            <result column="deptId" property="deptId"/>
+            <result column="posId" property="posId"/>
+            <result column="degree" property="degree"/>
+            <result column="school" property="school"/>
+            <result column="workDate" property="workDate"/>
+            <result column="workState" property="workState"/>
+            <result column="eworkID" property="workID"/>
+            <result column="notWorkDate" property="notWorkDate"/>
+        </association>
+
+        <association property="dept" javaType="com.wrs.cems.bean.Department">
+            <id column="did" property="id"/>
+            <result column="deptname" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getEmptrainById" resultType="com.wrs.cems.bean.Emptrain">
+        SELECT *
+        FROM emp_train
+        WHERE TId = #{TId}
+    </select>
+
+    <select id="getEmptrainAndEmp" resultMap="MyEmptrain">
+        SELECT t.TId             id,
+               t.TWorkId         eid,
+               t.TDeptId         TDeptId,
+               t.trainDate      trainDate,
+               t.trainEnd       trainEnd,
+               t.trainContent   trainContent,
+               t.remark         remark,
+               e.EId             e_id,
+               e.name           name,
+               e.gender         gender,
+               e.birthday       birthday,
+               e.IDCard         IDCard,
+               e.wedlock        wedlock,
+               e.nationId       nationId,
+               e.nativePlace    nativePlace,
+               e.email          email,
+               e.phone          phone,
+               e.address        address,
+               e.deptId         deptId,
+               e.posId          posId,
+               e.degree         degree,
+               e.school         school,
+               e.workDate       workDate,
+               e.workState      workState,
+               e.workID         eworkID,
+               e.notWorkDate    notWorkDate,
+               d.id             did,
+               d.name           deptname
+        FROM emp_train t,
+             employee e,
+             department d
+        WHERE t.TWorkId = e.workID AND t.TDeptId = d.id
+    </select>
+
+    <select id="getAllEmptrains" resultType="com.wrs.cems.bean.Emptrain">
+        SELECT *
+        FROM emp_train
+    </select>
+
+    <delete id="deleteEmptrainById">
+        DELETE
+        FROM emp_train
+        WHERE TId = #{TId}
+    </delete>
+
+    <insert id="addEmptrain" parameterType="com.wrs.cems.bean.Emptrain">
+        INSERT INTO emp_train (TId, TWorkId,TDeptId, trainDate,trainEnd, trainContent, remark)
+        VALUES (#{TId}, #{TWorkId},#{TDeptId}, #{trainDate}, #{trainEnd},#{trainContent}, #{remark})
+    </insert>
+
+    <update id="updateEmptrain" parameterType="com.wrs.cems.bean.Emptrain">
+        UPDATE emp_train
+        SET TDeptId      = #{TDeptId},
+            trainDate    = #{trainDate},
+            trainEnd     = #{trainEnd},
+            trainContent = #{trainContent},
+            remark       = #{remark}
+        WHERE TId = #{TId}
+    </update>
+
+    <select id="query" resultMap="MyEmptrain">
+        SELECT t.TId             id,
+               t.TWorkId         eid,
+               t.TDeptId         TDeptId,
+               t.trainDate      trainDate,
+               t.trainEnd       trainEnd,
+               t.trainContent   trainContent,
+               t.remark         remark,
+               e.EId             e_id,
+               e.name           name,
+               e.gender         gender,
+               e.birthday       birthday,
+               e.IDCard         IDCard,
+               e.wedlock        wedlock,
+               e.nationId       nationId,
+               e.nativePlace    nativePlace,
+               e.email          email,
+               e.phone          phone,
+               e.address        address,
+               e.deptId         deptId,
+               e.posId          posId,
+               e.degree         degree,
+               e.school         school,
+               e.workDate       workDate,
+               e.workState      workState,
+               e.workID         eworkID,
+               e.notWorkDate    notWorkDate,
+               d.id             did,
+               d.name           deptname
+        FROM emp_train AS t JOIN employee e ON e.workID = t.TWorkId JOIN department d on t.TDeptId = d.id
+        <where>
+            <if test="name!=''">
+                AND e.name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="TWorkId!=''">
+                AND t.TWorkId LIKE #{TWorkId}
+            </if>
+            <if test="deptname!=''">
+                AND d.name =#{deptname}
+            </if>
+        </where>
+    </select>
+</mapper>
